@@ -12,19 +12,18 @@ import time
 from contextlib import asynccontextmanager
 from typing import List
 
+from config import MODEL_NAME, MODEL_VERSION
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
-from starlette.responses import Response
-from pydantic import BaseModel
-
-from config import MODEL_NAME, MODEL_VERSION
-from model_manager import manager
 from metrics import (
-    REQUEST_COUNT,
     INFERENCE_LATENCY,
+    REQUEST_COUNT,
     set_model_info,
 )
+from model_manager import manager
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
+from pydantic import BaseModel
+from starlette.responses import Response
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)

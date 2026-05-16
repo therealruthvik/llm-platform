@@ -5,13 +5,12 @@ Swapping model = restart pod (K8s rolling update handles this).
 
 import logging
 import time
-from typing import List, Dict
+from typing import Dict, List
 
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-from config import MODEL_NAME, HF_TOKEN, MAX_NEW_TOKENS, MAX_HISTORY_TURNS
+from config import HF_TOKEN, MAX_HISTORY_TURNS, MAX_NEW_TOKENS, MODEL_NAME
 from metrics import TOKENS_GENERATED
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 logger = logging.getLogger(__name__)
 

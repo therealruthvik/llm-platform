@@ -35,7 +35,7 @@ jobs:
         run: black --check app/backend training
 
       - name: isort (import order)
-        run: isort --check-only app/backend training
+        run: isort --check-only --profile black app/backend training
 
       - name: Set up Node
         uses: actions/setup-node@v4

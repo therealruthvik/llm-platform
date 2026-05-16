@@ -4,8 +4,9 @@ Run: pytest app/backend/tests/
 Model loading is mocked – no GPU or HF download required.
 """
 
-import pytest
 from unittest.mock import MagicMock, patch
+
+import pytest
 from fastapi.testclient import TestClient
 
 
@@ -24,8 +25,8 @@ def mock_manager():
 @pytest.fixture()
 def client(mock_manager):
     # Import after mocking
-    import sys
     import os
+    import sys
 
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
     from main import app

@@ -3,7 +3,7 @@ Prometheus metrics for the LLM backend.
 Exposed at /metrics via prometheus_client.
 """
 
-from prometheus_client import Counter, Histogram, Gauge, Info
+from prometheus_client import Counter, Gauge, Histogram, Info
 
 REQUEST_COUNT = Counter(
     "llm_request_total",
