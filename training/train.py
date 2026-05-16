@@ -35,6 +35,7 @@ logger = logging.getLogger(__name__)
 
 # ── Data loading ──────────────────────────────────────────────────────────────
 
+
 def load_conversations(data_path: str) -> list[dict]:
     """
     Load conversations from a JSONL file.
@@ -64,6 +65,7 @@ def conversations_to_text(records: list[dict], tokenizer) -> list[str]:
 
 # ── Tokenisation ──────────────────────────────────────────────────────────────
 
+
 def tokenize(texts: list[str], tokenizer, max_length: int = 512):
     def _tok(batch):
         return tokenizer(
@@ -78,6 +80,7 @@ def tokenize(texts: list[str], tokenizer, max_length: int = 512):
 
 
 # ── Training ──────────────────────────────────────────────────────────────────
+
 
 def train(args):
     logger.info(f"Base model : {args.base_model}")
@@ -119,8 +122,8 @@ def train(args):
         save_strategy="epoch",
         load_best_model_at_end=True,
         fp16=torch.cuda.is_available(),
-        report_to="none",              # set to "wandb" if you want tracking
-        push_to_hub=False,             # we push manually via push_to_hub.py
+        report_to="none",  # set to "wandb" if you want tracking
+        push_to_hub=False,  # we push manually via push_to_hub.py
     )
 
     data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
@@ -144,6 +147,7 @@ def train(args):
 
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
+
 
 def parse_args():
     p = argparse.ArgumentParser(description="Fine-tune DialoGPT on custom data")

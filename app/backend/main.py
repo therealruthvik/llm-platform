@@ -32,6 +32,7 @@ logger = logging.getLogger(__name__)
 
 # ── Lifespan (startup/shutdown) ──────────────────────────────────────────────
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Starting up – loading model …")
@@ -56,8 +57,9 @@ app.add_middleware(
 
 # ── Schemas ──────────────────────────────────────────────────────────────────
 
+
 class Message(BaseModel):
-    role: str       # "user" | "assistant"
+    role: str  # "user" | "assistant"
     content: str
 
 
@@ -74,6 +76,7 @@ class ChatResponse(BaseModel):
 
 
 # ── Routes ───────────────────────────────────────────────────────────────────
+
 
 @app.get("/health")
 def health():

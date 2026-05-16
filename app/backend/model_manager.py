@@ -52,20 +52,24 @@ class ModelManager:
             raise RuntimeError("Model not loaded")
 
         # Keep last N turns to stay within token budget
-        recent = history[-(MAX_HISTORY_TURNS * 2):]
+        recent = history[-(MAX_HISTORY_TURNS * 2) :]
 
         # Build input – DialoGPT uses EOS token as turn separator
         input_ids = None
         for turn in recent:
             text = turn["content"] + self.tokenizer.eos_token
             ids = self.tokenizer.encode(text, return_tensors="pt")
-            input_ids = ids if input_ids is None else torch.cat([input_ids, ids], dim=-1)
+            input_ids = (
+                ids if input_ids is None else torch.cat([input_ids, ids], dim=-1)
+            )
 
         # Append current user message
         user_ids = self.tokenizer.encode(
             user_message + self.tokenizer.eos_token, return_tensors="pt"
         )
-        input_ids = user_ids if input_ids is None else torch.cat([input_ids, user_ids], dim=-1)
+        input_ids = (
+            user_ids if input_ids is None else torch.cat([input_ids, user_ids], dim=-1)
+        )
         input_ids = input_ids.to(self.device)
 
         with torch.no_grad():
@@ -79,7 +83,7 @@ class ModelManager:
             )
 
         # Decode only the newly generated tokens
-        new_tokens = output_ids[:, input_ids.shape[-1]:]
+        new_tokens = output_ids[:, input_ids.shape[-1] :]
         reply = self.tokenizer.decode(new_tokens[0], skip_special_tokens=True)
 
         TOKENS_GENERATED.inc(new_tokens.shape[-1])

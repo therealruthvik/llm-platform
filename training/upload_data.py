@@ -34,7 +34,7 @@ def upload(args):
         repo_id=args.dataset_repo,
         repo_type="dataset",
         exist_ok=True,
-        private=True,       # keep training data private
+        private=True,  # keep training data private
     )
 
     logger.info(f"Uploading {args.data_path} → {args.dataset_repo}")
@@ -46,14 +46,18 @@ def upload(args):
         commit_message="Upload training data",
     )
 
-    logger.info(f"Dataset uploaded: https://huggingface.co/datasets/{args.dataset_repo}")
+    logger.info(
+        f"Dataset uploaded: https://huggingface.co/datasets/{args.dataset_repo}"
+    )
     logger.info("Next step: trigger GitHub Actions 'model-update' workflow manually.")
 
 
 def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument("--data_path", required=True, help="Path to local JSONL file")
-    p.add_argument("--dataset_repo", required=True, help="e.g. myuser/llm-training-data")
+    p.add_argument(
+        "--dataset_repo", required=True, help="e.g. myuser/llm-training-data"
+    )
     p.add_argument("--hf_token", default=None)
     return p.parse_args()
 

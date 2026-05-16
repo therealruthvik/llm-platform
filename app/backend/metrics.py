@@ -8,7 +8,7 @@ from prometheus_client import Counter, Histogram, Gauge, Info
 REQUEST_COUNT = Counter(
     "llm_request_total",
     "Total chat requests",
-    ["status"],   # success | error
+    ["status"],  # success | error
 )
 
 INFERENCE_LATENCY = Histogram(

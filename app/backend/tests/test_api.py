@@ -12,8 +12,9 @@ from fastapi.testclient import TestClient
 # Patch model loading before importing app
 @pytest.fixture(autouse=True)
 def mock_manager():
-    with patch("model_manager.ModelManager.load"), \
-         patch("model_manager.manager") as mock_mgr:
+    with patch("model_manager.ModelManager.load"), patch(
+        "model_manager.manager"
+    ) as mock_mgr:
         mock_mgr.model = MagicMock()
         mock_mgr.tokenizer = MagicMock()
         mock_mgr.generate.return_value = "Hello! I am a mocked assistant."
@@ -25,8 +26,10 @@ def client(mock_manager):
     # Import after mocking
     import sys
     import os
+
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
     from main import app
+
     return TestClient(app)
 
 
@@ -61,7 +64,9 @@ class TestChat:
             {"role": "user", "content": "Hi"},
             {"role": "assistant", "content": "Hello!"},
         ]
-        resp = client.post("/chat", json={"message": "How are you?", "history": history})
+        resp = client.post(
+            "/chat", json={"message": "How are you?", "history": history}
+        )
         assert resp.status_code == 200
 
     def test_chat_empty_message(self, client):

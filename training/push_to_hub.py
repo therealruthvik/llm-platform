@@ -59,7 +59,9 @@ def push(args):
     model = AutoModelForCausalLM.from_pretrained(args.model_dir)
 
     # Push model + tokenizer
-    model.push_to_hub(args.repo_id, token=args.hf_token, commit_message=f"Release {args.version_tag}")
+    model.push_to_hub(
+        args.repo_id, token=args.hf_token, commit_message=f"Release {args.version_tag}"
+    )
     tokenizer.push_to_hub(args.repo_id, token=args.hf_token)
 
     # Create/update model card
@@ -77,8 +79,8 @@ def push(args):
     hub_url = f"https://huggingface.co/{args.repo_id}"
     logger.info(f"Model pushed successfully: {hub_url}")
     logger.info("Update k8s/backend/configmap.yaml:")
-    logger.info(f"  MODEL_NAME: \"{args.repo_id}\"")
-    logger.info(f"  MODEL_VERSION: \"{args.version_tag}\"")
+    logger.info(f'  MODEL_NAME: "{args.repo_id}"')
+    logger.info(f'  MODEL_VERSION: "{args.version_tag}"')
 
 
 def parse_args():
@@ -86,12 +88,15 @@ def parse_args():
     p.add_argument("--model_dir", required=True)
     p.add_argument("--repo_id", required=True, help="e.g. myuser/dialogpt-v2")
     p.add_argument("--version_tag", default="v2")
-    p.add_argument("--hf_token", default=None, help="HF write token (or set HF_TOKEN env var)")
+    p.add_argument(
+        "--hf_token", default=None, help="HF write token (or set HF_TOKEN env var)"
+    )
     return p.parse_args()
 
 
 if __name__ == "__main__":
     import os
+
     args = parse_args()
     if not args.hf_token:
         args.hf_token = os.environ.get("HF_TOKEN")
