@@ -2,5 +2,5 @@ transformers==4.48.0
 datasets==2.19.1
 torch==2.6.0
 accelerate==0.34.0
-huggingface-hub==0.23.1
+huggingface-hub==0.27.0
 evaluate==0.4.2
