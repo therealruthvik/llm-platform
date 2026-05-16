@@ -20,7 +20,6 @@ import argparse
 import logging
 import os
 
-from datasets import load_dataset
 from huggingface_hub import HfApi
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")

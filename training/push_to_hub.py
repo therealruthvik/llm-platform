@@ -16,9 +16,7 @@ The script:
 
 import argparse
 import logging
-from pathlib import Path
-
-from huggingface_hub import HfApi, ModelCard, ModelCardData
+from huggingface_hub import HfApi, ModelCard
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -78,7 +76,7 @@ def push(args):
 
     hub_url = f"https://huggingface.co/{args.repo_id}"
     logger.info(f"Model pushed successfully: {hub_url}")
-    logger.info(f"Update k8s/backend/configmap.yaml:")
+    logger.info("Update k8s/backend/configmap.yaml:")
     logger.info(f"  MODEL_NAME: \"{args.repo_id}\"")
     logger.info(f"  MODEL_VERSION: \"{args.version_tag}\"")
 

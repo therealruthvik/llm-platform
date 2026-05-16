@@ -12,7 +12,7 @@ from fastapi.testclient import TestClient
 # Patch model loading before importing app
 @pytest.fixture(autouse=True)
 def mock_manager():
-    with patch("model_manager.ModelManager.load") as mock_load, \
+    with patch("model_manager.ModelManager.load"), \
          patch("model_manager.manager") as mock_mgr:
         mock_mgr.model = MagicMock()
         mock_mgr.tokenizer = MagicMock()
@@ -23,7 +23,8 @@ def mock_manager():
 @pytest.fixture()
 def client(mock_manager):
     # Import after mocking
-    import sys, os
+    import sys
+    import os
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
     from main import app
     return TestClient(app)
