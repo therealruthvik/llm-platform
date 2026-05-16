@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: llm-platform
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/threalruthvik/llm-platform.git
+    targetRevision: main
+    path: k8s                  # ArgoCD watches this folder
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: llm-platform
+
+  syncPolicy:
+    automated:
+      prune: true              # remove resources deleted from git
+      selfHeal: true           # revert manual kubectl changes
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+
+  # Health checks – ArgoCD waits for these before marking sync green
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/replicas       # ignore HPA-managed replica count

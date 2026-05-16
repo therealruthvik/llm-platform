@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: llm-frontend
+  namespace: llm-platform
+  labels:
+    app: llm-frontend
+spec:
+  selector:
+    app: llm-frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  type: ClusterIP

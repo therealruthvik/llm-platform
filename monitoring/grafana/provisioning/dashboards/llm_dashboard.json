@@ -1,0 +1,49 @@
+{
+  "title": "LLM Platform",
+  "uid": "llm-platform-main",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Model Version",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 0, "w": 4, "h": 4 },
+      "targets": [{ "expr": "llm_model_version", "legendFormat": "version" }],
+      "options": { "colorMode": "background", "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "id": 2,
+      "title": "Requests/min",
+      "type": "timeseries",
+      "gridPos": { "x": 4, "y": 0, "w": 10, "h": 8 },
+      "targets": [{ "expr": "rate(llm_request_total[1m]) * 60", "legendFormat": "{{status}}" }]
+    },
+    {
+      "id": 3,
+      "title": "Inference Latency (p50 / p95 / p99)",
+      "type": "timeseries",
+      "gridPos": { "x": 14, "y": 0, "w": 10, "h": 8 },
+      "targets": [
+        { "expr": "histogram_quantile(0.50, rate(llm_inference_duration_seconds_bucket[5m]))", "legendFormat": "p50" },
+        { "expr": "histogram_quantile(0.95, rate(llm_inference_duration_seconds_bucket[5m]))", "legendFormat": "p95" },
+        { "expr": "histogram_quantile(0.99, rate(llm_inference_duration_seconds_bucket[5m]))", "legendFormat": "p99" }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Error Rate",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 8, "w": 12, "h": 6 },
+      "targets": [{ "expr": "rate(llm_request_total{status='error'}[5m])", "legendFormat": "errors/s" }]
+    },
+    {
+      "id": 5,
+      "title": "Tokens Generated/min",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 8, "w": 12, "h": 6 },
+      "targets": [{ "expr": "rate(llm_tokens_generated_total[1m]) * 60", "legendFormat": "tokens/min" }]
+    }
+  ]
+}

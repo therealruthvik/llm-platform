@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+*.so
+.pytest_cache/
+
+# Training artifacts
+training/output/
+training/data/*.jsonl
+!training/data/conversations.jsonl   # keep sample data
+
+# Node
+node_modules/
+app/frontend/dist/
+
+# HuggingFace cache
+.cache/
+
+# Secrets
+.env
+*.env.local
+secrets/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Docker
+*.dockerignore
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Kubernetes secrets (never commit)
+*-secret.yaml
+kubeconfig

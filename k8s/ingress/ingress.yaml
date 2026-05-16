@@ -1,0 +1,50 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: llm-ingress
+  namespace: llm-platform
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: llm.local        # add to /etc/hosts: 127.0.0.1 llm.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: llm-frontend
+                port:
+                  number: 80
+          - path: /chat
+            pathType: Prefix
+            backend:
+              service:
+                name: llm-backend
+                port:
+                  number: 80
+          - path: /health
+            pathType: Prefix
+            backend:
+              service:
+                name: llm-backend
+                port:
+                  number: 80
+          - path: /version
+            pathType: Prefix
+            backend:
+              service:
+                name: llm-backend
+                port:
+                  number: 80
+          - path: /metrics
+            pathType: Prefix
+            backend:
+              service:
+                name: llm-backend
+                port:
+                  number: 80

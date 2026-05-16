@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llm-backend
+  namespace: llm-platform
+  labels:
+    app: llm-backend
+    version: v1        # updated by model-update pipeline
+  annotations:
+    # ArgoCD image updater annotation (optional, if using image-updater)
+    argocd-image-updater.argoproj.io/image-list: backend=ghcr.io/YOUR_GITHUB_USER/llm-backend
+    argocd-image-updater.argoproj.io/backend.update-strategy: latest
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: llm-backend
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0      # zero-downtime rollout
+  template:
+    metadata:
+      labels:
+        app: llm-backend
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "8000"
+    spec:
+      # Grace period allows in-flight requests to complete
+      terminationGracePeriodSeconds: 60
+
+      containers:
+        - name: backend
+          image: ghcr.io/YOUR_GITHUB_USER/llm-backend:latest  # CI overwrites this tag
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+              name: http
+
+          # Load config from ConfigMap
+          envFrom:
+            - configMapRef:
+                name: backend-config
+
+          # HF token from secret (create with: kubectl create secret generic hf-secret --from-literal=HF_TOKEN=xxx -n llm-platform)
+          env:
+            - name: HF_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: hf-secret
+                  key: HF_TOKEN
+                  optional: true   # pod starts even without secret
+
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "500m"
+            limits:
+              memory: "4Gi"
+              cpu: "2000m"
+
+          # HuggingFace model cache – survives pod restarts via emptyDir
+          volumeMounts:
+            - name: hf-cache
+              mountPath: /app/.cache/huggingface
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 120   # model download can take time
+            periodSeconds: 30
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            failureThreshold: 5
+
+      volumes:
+        - name: hf-cache
+          emptyDir:
+            sizeLimit: 5Gi

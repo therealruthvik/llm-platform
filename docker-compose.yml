@@ -1,0 +1,67 @@
+version: "3.9"
+
+# ── Local dev compose – no cloud needed ──────────────────────────────────────
+services:
+
+  backend:
+    build:
+      context: ./app/backend
+      dockerfile: Dockerfile
+    image: llm-backend:local
+    container_name: llm-backend
+    ports:
+      - "8000:8000"
+    environment:
+      MODEL_NAME: "microsoft/DialoGPT-medium"
+      MODEL_VERSION: "v1"
+      HF_TOKEN: "${HF_TOKEN:-}"        # optional – set in .env
+      MAX_NEW_TOKENS: "200"
+    volumes:
+      - hf_cache:/app/.cache/huggingface   # persist model downloads
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  frontend:
+    build:
+      context: ./app/frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: "http://localhost:8000"
+    image: llm-frontend:local
+    container_name: llm-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    container_name: prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+
+  grafana:
+    image: grafana/grafana:10.4.2
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: "admin"
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+
+volumes:
+  hf_cache:
+  grafana_data:
