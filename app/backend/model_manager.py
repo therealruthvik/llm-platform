@@ -7,10 +7,8 @@ import logging
 import time
 from typing import Dict, List
 
-import torch
 from config import HF_TOKEN, MAX_HISTORY_TURNS, MAX_NEW_TOKENS, MODEL_NAME
 from metrics import TOKENS_GENERATED
-from transformers import AutoModelForCausalLM, AutoTokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -19,11 +17,17 @@ class ModelManager:
     def __init__(self) -> None:
         self.model = None
         self.tokenizer = None
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        logger.info(f"Using device: {self.device}")
+        self.device = "cpu"  # updated in load() once torch is imported
 
     def load(self) -> None:
         """Download and load model + tokenizer from HuggingFace Hub."""
+        # Lazy imports – keeps torch/transformers out of module scope so
+        # unit tests can run without installing the heavy ML packages.
+        import torch
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        logger.info(f"Using device: {self.device}")
         logger.info(f"Loading model: {MODEL_NAME}")
         start = time.time()
 
@@ -40,13 +44,17 @@ class ModelManager:
         elapsed = time.time() - start
         logger.info(f"Model loaded in {elapsed:.1f}s")
 
-    def generate(self, history: List[Dict[str, str]], user_message: str) -> str:
+    def generate(
+        self, history: List[Dict[str, str]], user_message: str
+    ) -> str:  # noqa: E501
         """
         Generate a response given conversation history.
 
         history: [{"role": "user"|"assistant", "content": "..."}]
         Returns: assistant reply string
         """
+        import torch
+
         if self.model is None or self.tokenizer is None:
             raise RuntimeError("Model not loaded")
 
