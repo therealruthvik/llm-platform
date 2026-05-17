@@ -4,20 +4,22 @@ metadata:
   name: llm-ingress
   namespace: llm-platform
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    # NO rewrite-target – pass paths through as-is to backends
     nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"   # allow large JSONL uploads
 spec:
   ingressClassName: nginx
   rules:
-    - host: llm.local        # add to /etc/hosts: 127.0.0.1 llm.local
+    - host: llm.local
       http:
         paths:
-          - path: /
+          # ── Backend API routes (must come before / catch-all) ──────────────
+          - path: /api
             pathType: Prefix
             backend:
               service:
-                name: llm-frontend
+                name: llm-backend
                 port:
                   number: 80
           - path: /chat
@@ -46,5 +48,13 @@ spec:
             backend:
               service:
                 name: llm-backend
+                port:
+                  number: 80
+          # ── Frontend catch-all ─────────────────────────────────────────────
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: llm-frontend
                 port:
                   number: 80
