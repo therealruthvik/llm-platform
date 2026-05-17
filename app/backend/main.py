@@ -13,7 +13,7 @@ import logging
 import os
 import time
 from contextlib import asynccontextmanager
-from typing import List, Optional
+from typing import List
 
 from config import MODEL_NAME, MODEL_VERSION
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form
@@ -191,7 +191,7 @@ async def start_train_job_upload(
     training_data = content.decode("utf-8")
 
     # Basic validation
-    lines = [l for l in training_data.splitlines() if l.strip()]
+    lines = [ln for ln in training_data.splitlines() if ln.strip()]
     if not lines:
         raise HTTPException(status_code=400, detail="Uploaded file is empty")
 

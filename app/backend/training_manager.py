@@ -105,7 +105,7 @@ def _update_k8s_model(model_name: str, version: str, job_id: str) -> None:
             }
         }
         apps_v1.patch_namespaced_deployment(deployment_name, namespace, patch_deployment)
-        _log(job_id, f"Deployment rollout restart triggered")
+        _log(job_id, "Deployment rollout restart triggered")
 
     except ImportError:
         _log(job_id, "kubernetes client not installed – skipping K8s update (local dev mode)")
@@ -128,7 +128,7 @@ def _run_training(job_id: str, config: dict) -> None:
         # Make sure you have run `modal deploy training/modal_train.py` first
         fine_tune = modal.Function.lookup("llm-platform-training", "fine_tune")
 
-        _log(job_id, f"Submitting training job to Modal GPU (A10G) …")
+        _log(job_id, "Submitting training job to Modal GPU (A10G) …")
         _log(job_id, f"Base model : {config.get('base_model')}")
         _log(job_id, f"Target repo: {config.get('hf_repo_id')}")
         _log(job_id, f"Epochs     : {config.get('epochs')}")

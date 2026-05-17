@@ -141,7 +141,7 @@ def fine_tune(config_dict: dict) -> dict:
     model.print_trainable_parameters()
 
     # ── 4. Prepare dataset ──────────────────────────────────────────────────
-    records = [json.loads(l) for l in cfg.training_data.strip().splitlines() if l.strip()]
+    records = [json.loads(ln) for ln in cfg.training_data.strip().splitlines() if ln.strip()]
 
     texts = []
     for rec in records:
