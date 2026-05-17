@@ -66,7 +66,8 @@ def _update_k8s_model(model_name: str, version: str, job_id: str) -> None:
     Falls back to a no-op if kubernetes client is not available (local dev).
     """
     try:
-        from kubernetes import client, config as k8s_config
+        from kubernetes import client
+        from kubernetes import config as k8s_config
 
         # Load in-cluster config (works inside K8s pod)
         try:

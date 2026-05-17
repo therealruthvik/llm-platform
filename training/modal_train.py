@@ -77,6 +77,7 @@ def fine_tune(config_dict: dict) -> dict:
     """
     import torch
     from datasets import Dataset
+    from huggingface_hub import HfApi
     from peft import (
         LoraConfig,
         TaskType,
@@ -91,7 +92,6 @@ def fine_tune(config_dict: dict) -> dict:
         Trainer,
         TrainingArguments,
     )
-    from huggingface_hub import HfApi
 
     cfg = TrainConfig(**config_dict)
     hf_token = cfg.hf_token or os.environ.get("HF_TOKEN")

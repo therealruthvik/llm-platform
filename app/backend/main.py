@@ -16,7 +16,7 @@ from contextlib import asynccontextmanager
 from typing import List
 
 from config import MODEL_NAME, MODEL_VERSION
-from fastapi import FastAPI, HTTPException, UploadFile, File, Form
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from metrics import (
     INFERENCE_LATENCY,
