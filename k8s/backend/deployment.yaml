@@ -34,7 +34,7 @@ spec:
 
       containers:
         - name: backend
-          image: ghcr.io/YOUR_GITHUB_USER/llm-backend:latest  # CI overwrites this tag
+          image: ghcr.io/therealruthvik/llm-backend:latest  # CI overwrites this tag
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
