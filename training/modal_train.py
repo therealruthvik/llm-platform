@@ -68,7 +68,7 @@ class TrainConfig:
 # ── Main training function ─────────────────────────────────────────────────────
 @app.function(
     image=training_image,
-    gpu=modal.gpu.A10G(),           # 24GB VRAM – fits Llama 3.1 8B in 4-bit
+    gpu="A10G",                      # 24GB VRAM – fits Llama 3.1 8B in 4-bit
     timeout=7200,                    # 2 hours max
     volumes={"/model-cache": model_cache},
     secrets=[modal.Secret.from_name("hf-secret")],  # HF_TOKEN env var
