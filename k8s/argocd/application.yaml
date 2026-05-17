@@ -9,9 +9,11 @@ spec:
   project: default
 
   source:
-    repoURL: https://github.com/threalruthvik/llm-platform.git
+    repoURL: https://github.com/therealruthvik/llm-platform.git
     targetRevision: main
     path: k8s                  # ArgoCD watches this folder
+    directory:
+      recurse: true            # recurse into backend/, frontend/, etc.
 
   destination:
     server: https://kubernetes.default.svc
