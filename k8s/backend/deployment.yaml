@@ -34,7 +34,7 @@ spec:
 
       containers:
         - name: backend
-          image: ghcr.io/therealruthvik/llm-backend:sha-16ef412
+          image: ghcr.io/therealruthvik/llm-backend:sha-d4a80d0
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
