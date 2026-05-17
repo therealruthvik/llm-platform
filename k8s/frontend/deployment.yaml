@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/therealruthvik/llm-frontend:sha-16ef412
+          image: ghcr.io/therealruthvik/llm-frontend:sha-d4a80d0
           imagePullPolicy: Always
           ports:
             - containerPort: 80
