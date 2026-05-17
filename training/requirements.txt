@@ -4,3 +4,7 @@ torch==2.6.0
 accelerate==0.34.0
 huggingface-hub==0.27.0
 evaluate==0.4.2
+peft==0.10.0
+bitsandbytes==0.43.1
+trl==0.8.6
+modal>=0.64.0
