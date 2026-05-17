@@ -32,31 +32,28 @@ app = modal.App("llm-platform-training")
 model_cache = modal.Volume.from_name("llm-model-cache", create_if_missing=True)
 
 # Docker image with all training deps
-training_image = (
-    modal.Image.debian_slim(python_version="3.11")
-    .pip_install(
-        "torch==2.6.0",
-        "transformers==4.48.0",
-        "peft==0.10.0",
-        "bitsandbytes==0.43.1",
-        "accelerate==0.34.0",
-        "datasets==2.19.1",
-        "huggingface-hub==0.27.0",
-        "trl==0.8.6",
-        "scipy",
-        "einops",
-    )
+training_image = modal.Image.debian_slim(python_version="3.11").pip_install(
+    "torch==2.6.0",
+    "transformers==4.48.0",
+    "peft==0.10.0",
+    "bitsandbytes==0.43.1",
+    "accelerate==0.34.0",
+    "datasets==2.19.1",
+    "huggingface-hub==0.27.0",
+    "trl==0.8.6",
+    "scipy",
+    "einops",
 )
 
 
 # ── Config dataclass ───────────────────────────────────────────────────────────
 @dataclass
 class TrainConfig:
-    base_model: str          # e.g. "meta-llama/Meta-Llama-3.1-8B"
-    hf_repo_id: str          # destination e.g. "myuser/llama-3-finetuned-v2"
-    version_tag: str         # e.g. "v2"
-    training_data: str       # JSONL content as string
-    hf_token: str            # HuggingFace write token
+    base_model: str  # e.g. "meta-llama/Meta-Llama-3.1-8B"
+    hf_repo_id: str  # destination e.g. "myuser/llama-3-finetuned-v2"
+    version_tag: str  # e.g. "v2"
+    training_data: str  # JSONL content as string
+    hf_token: str  # HuggingFace write token
     epochs: int = 2
     batch_size: int = 2
     max_length: int = 512
@@ -68,8 +65,8 @@ class TrainConfig:
 # ── Main training function ─────────────────────────────────────────────────────
 @app.function(
     image=training_image,
-    gpu="A10G",                      # 24GB VRAM – fits Llama 3.1 8B in 4-bit
-    timeout=7200,                    # 2 hours max
+    gpu="A10G",  # 24GB VRAM – fits Llama 3.1 8B in 4-bit
+    timeout=7200,  # 2 hours max
     volumes={"/model-cache": model_cache},
     secrets=[modal.Secret.from_name("hf-secret")],  # HF_TOKEN env var
 )
@@ -141,7 +138,9 @@ def fine_tune(config_dict: dict) -> dict:
     model.print_trainable_parameters()
 
     # ── 4. Prepare dataset ──────────────────────────────────────────────────
-    records = [json.loads(ln) for ln in cfg.training_data.strip().splitlines() if ln.strip()]
+    records = [
+        json.loads(ln) for ln in cfg.training_data.strip().splitlines() if ln.strip()
+    ]
 
     texts = []
     for rec in records:

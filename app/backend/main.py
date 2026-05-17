@@ -135,9 +135,9 @@ def metrics():
 
 class TrainRequest(BaseModel):
     base_model: str = "meta-llama/Meta-Llama-3.1-8B"
-    hf_repo_id: str               # e.g. "myuser/llama-v2"
+    hf_repo_id: str  # e.g. "myuser/llama-v2"
     version_tag: str = "v2"
-    training_data: str            # JSONL content as string
+    training_data: str  # JSONL content as string
     epochs: int = 2
     lora_r: int = 16
     lora_alpha: int = 32
@@ -196,6 +196,7 @@ async def start_train_job_upload(
         raise HTTPException(status_code=400, detail="Uploaded file is empty")
 
     import json
+
     for i, line in enumerate(lines):
         try:
             obj = json.loads(line)

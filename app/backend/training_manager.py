@@ -59,6 +59,7 @@ def _set_status(job_id: str, status: str, **kwargs) -> None:
 
 # ── K8s ConfigMap update ───────────────────────────────────────────────────────
 
+
 def _update_k8s_model(model_name: str, version: str, job_id: str) -> None:
     """
     Patch the backend ConfigMap with the new model and trigger a rolling restart.
@@ -93,6 +94,7 @@ def _update_k8s_model(model_name: str, version: str, job_id: str) -> None:
 
         # Rolling restart (patch annotation with timestamp)
         import datetime
+
         patch_deployment = {
             "spec": {
                 "template": {
@@ -104,17 +106,23 @@ def _update_k8s_model(model_name: str, version: str, job_id: str) -> None:
                 }
             }
         }
-        apps_v1.patch_namespaced_deployment(deployment_name, namespace, patch_deployment)
+        apps_v1.patch_namespaced_deployment(
+            deployment_name, namespace, patch_deployment
+        )
         _log(job_id, "Deployment rollout restart triggered")
 
     except ImportError:
-        _log(job_id, "kubernetes client not installed – skipping K8s update (local dev mode)")
+        _log(
+            job_id,
+            "kubernetes client not installed – skipping K8s update (local dev mode)",
+        )
     except Exception as exc:
         _log(job_id, f"K8s update failed: {exc}")
         raise
 
 
 # ── Background training worker ─────────────────────────────────────────────────
+
 
 def _run_training(job_id: str, config: dict) -> None:
     """Runs in a background thread. Calls Modal, then updates K8s."""
