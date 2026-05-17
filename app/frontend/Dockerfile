@@ -1,6 +1,9 @@
 # ── Stage 1: build ───────────────────────────────────────────────────────────
 FROM node:20-alpine AS builder
 
+# Patch OS packages in builder too
+RUN apk upgrade --no-cache
+
 WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm ci --silent
@@ -11,7 +14,10 @@ ENV VITE_API_URL=$VITE_API_URL
 RUN npm run build
 
 # ── Stage 2: serve with nginx ─────────────────────────────────────────────────
-FROM nginx:1.27-alpine AS runtime
+FROM nginx:1.28-alpine AS runtime
+
+# Patch all OS packages (fixes libcrypto3/libssl3/libxml2 CVEs)
+RUN apk upgrade --no-cache
 
 # Remove default nginx page
 RUN rm -rf /usr/share/nginx/html/*

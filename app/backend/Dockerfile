@@ -1,6 +1,9 @@
 # ── Stage 1: dependency builder ───────────────────────────────────────────────
 FROM python:3.11-slim AS builder
 
+# Patch OS packages (fixes openssl/libssl CVEs)
+RUN apt-get update && apt-get upgrade -y --no-install-recommends && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /build
 COPY requirements.txt .
 RUN pip install --upgrade pip \
@@ -8,6 +11,9 @@ RUN pip install --upgrade pip \
 
 # ── Stage 2: runtime ──────────────────────────────────────────────────────────
 FROM python:3.11-slim AS runtime
+
+# Patch OS packages
+RUN apt-get update && apt-get upgrade -y --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
 # Non-root user for security
 RUN useradd --create-home appuser
